@@ -120,6 +120,11 @@ EOF
 	exit 101
 EOF
 
+  mv "/klish_2.0.4_amd64.deb" "${_TARGET}/"
+  _in_target dpkg -i /klish_2.0.4_amd64.deb
+  _in_target apt-get install -fy
+  rm -f "${_TARGET}/klish_2.0.4_amd64.deb"
+
   _in_target apt-get -q update
   _in_target apt-get -y dist-upgrade
   _in_target apt-get -y clean
