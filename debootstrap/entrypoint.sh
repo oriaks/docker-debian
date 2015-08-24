@@ -125,17 +125,35 @@ EOF
   _in_target apt-get install -fy
   rm -f "${_TARGET}/klish_2.0.4_amd64.deb"
 
+  install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/clish/global-commands.xml" <<- EOF
+	<?xml version="1.0" encoding="UTF-8"?>
+	<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema http://clish.sourceforge.net/XMLSchema/clish.xsd">
+	  <COMMAND name="top" help="Return to the default mode" view="root-view" viewid="" />
+	  <COMMAND name="exit" help="Exit from the current CLI session">
+	    <ACTION builtin="clish_close"/>
+	  </COMMAND>
+	</CLISH_MODULE>
+EOF
+
   install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/clish/root-view.xml" <<- EOF
 	<?xml version="1.0" encoding="UTF-8"?>
 	<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema http://clish.sourceforge.net/XMLSchema/clish.xsd">
 	  <VIEW name="root-view" prompt="\${SYSTEM_NAME}&gt; ">
+	    <COMMAND name="help" help="Display an overview of the CLI syntax">
+	      <ACTION builtin="clish_overview"/>
+	    </COMMAND>
 	    <COMMAND name="shell" help="Invoke an interactive shell">
 	      <ACTION>/bin/bash</ACTION>
 	    </COMMAND>
-	    <COMMAND name="exit" help="Exit this CLI session">
-	      <ACTION builtin="clish_close"/>
-	    </COMMAND>
 	  </VIEW>
+	</CLISH_MODULE>
+EOF
+
+  install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/clish/types.xml" <<- EOF
+	<?xml version="1.0" encoding="UTF-8"?>
+	<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema http://clish.sourceforge.net/XMLSchema/clish.xsd">
+	  <PTYPE name="STRING" help="String" pattern=".+" />
+	  <PTYPE name="UINT" help="Unsigned integer" pattern="[0-9]+" />
 	</CLISH_MODULE>
 EOF
 
