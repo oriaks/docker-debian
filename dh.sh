@@ -3,6 +3,7 @@
 _usage () {
   cat <<- EOF
 	Usage: $0 build   Build images
+	       $0 shell   Invoke an interactive shell in a new ephemeral container
 
 EOF
 }
