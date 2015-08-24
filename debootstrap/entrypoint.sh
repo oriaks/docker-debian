@@ -27,6 +27,9 @@ _VARIANT='minbase'
 _ARCHIVE="/debian/debian-${_SUITE}.tar.xz"
 _INCLUDE='inetutils-ping,iproute2'
 
+DEBIAN_FRONTEND='noninteractive'
+TERM='linux'
+
 _in_target () {
   PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' \
   chroot "${_TARGET}" "$@"
