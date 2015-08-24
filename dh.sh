@@ -19,7 +19,7 @@ case "${_CMD}" in
     docker build --force-rm=true -t oriaks/debian:latest debian
     ;;
   "shell")
-    docker run -it --rm oriaks/debian:latest /bin/bash
+    docker run -it --rm oriaks/debian:latest
     ;;
   *)
     _usage

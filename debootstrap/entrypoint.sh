@@ -125,6 +125,20 @@ EOF
   _in_target apt-get install -fy
   rm -f "${_TARGET}/klish_2.0.4_amd64.deb"
 
+  install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/clish/root-view.xml" <<- EOF
+	<?xml version="1.0" encoding="UTF-8"?>
+	<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema http://clish.sourceforge.net/XMLSchema/clish.xsd">
+	  <VIEW name="root-view" prompt="\${SYSTEM_NAME}&gt; ">
+	    <COMMAND name="shell" help="Invoke an interactive shell">
+	      <ACTION>/bin/bash</ACTION>
+	    </COMMAND>
+	    <COMMAND name="exit" help="Exit this CLI session">
+	      <ACTION builtin="clish_close"/>
+	    </COMMAND>
+	  </VIEW>
+	</CLISH_MODULE>
+EOF
+
   _in_target apt-get -q update
   _in_target apt-get -y dist-upgrade
   _in_target apt-get -y clean
