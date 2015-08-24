@@ -18,6 +18,9 @@ case "${_CMD}" in
     docker run -it --cap-add sys_admin --rm -v "${_DIR}/debian:/debian" oriaks/debootstrap:latest
     docker build --force-rm=true -t oriaks/debian:latest debian
     ;;
+  "shell")
+    docker run -it --rm oriaks/debian:latest /bin/bash
+    ;;
   *)
     _usage
     ;;
