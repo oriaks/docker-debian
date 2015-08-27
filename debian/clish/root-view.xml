@@ -5,7 +5,7 @@
       <ACTION builtin="clish_overview"/>
     </COMMAND>
     <COMMAND name="shell" help="Invoke an interactive shell">
-      <ACTION>/bin/bash</ACTION>
+      <ACTION>sigexec /bin/bash</ACTION>
     </COMMAND>
   </VIEW>
 </CLISH_MODULE>
