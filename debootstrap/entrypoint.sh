@@ -16,14 +16,13 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-#set -x
+if [ -n "${DEBUG}" ]; then
+  set -x
+fi
 
 _SUITE='jessie'
 
 _TARGET="/var/tmp/${_SUITE}"
-_MIRROR='http://httpredir.debian.org/debian'
-_SCRIPT=''
-_VARIANT='minbase'
 _ARCHIVE="/debian/debian-${_SUITE}.tar.xz"
 _INCLUDE='inetutils-ping,iproute2'
 
@@ -49,7 +48,7 @@ _install () {
 _init () {
   [ -d "${_TARGET}" ] || mkdir -p "${_TARGET}"
 
-  debootstrap --variant="${_VARIANT}" --include="${_INCLUDE}" "${_SUITE}" "${_TARGET}" "${_MIRROR}" "${_SCRIPT}"
+  debootstrap --variant="minbase" --include="${_INCLUDE}" "${_SUITE}" "${_TARGET}" "http://httpredir.debian.org/debian"
 
   install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/apt/apt.conf.d/autoremove-suggests" <<- EOF
 	Apt::AutoRemove::SuggestsImportant "false";
@@ -125,38 +124,6 @@ EOF
   _in_target apt-get install -fy
   rm -f "${_TARGET}/klish_2.0.4_amd64.deb"
 
-  install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/clish/global-commands.xml" <<- EOF
-	<?xml version="1.0" encoding="UTF-8"?>
-	<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema http://clish.sourceforge.net/XMLSchema/clish.xsd">
-	  <COMMAND name="top" help="Return to the default mode" view="root-view" viewid="" />
-	  <COMMAND name="exit" help="Exit from the current CLI session">
-	    <ACTION builtin="clish_close"/>
-	  </COMMAND>
-	</CLISH_MODULE>
-EOF
-
-  install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/clish/root-view.xml" <<- EOF
-	<?xml version="1.0" encoding="UTF-8"?>
-	<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema http://clish.sourceforge.net/XMLSchema/clish.xsd">
-	  <VIEW name="root-view" prompt="\${SYSTEM_NAME}&gt; ">
-	    <COMMAND name="help" help="Display an overview of the CLI syntax">
-	      <ACTION builtin="clish_overview"/>
-	    </COMMAND>
-	    <COMMAND name="shell" help="Invoke an interactive shell">
-	      <ACTION>/bin/bash</ACTION>
-	    </COMMAND>
-	  </VIEW>
-	</CLISH_MODULE>
-EOF
-
-  install -D -o root -g root -m 0644 /dev/stdin "${_TARGET}/etc/clish/types.xml" <<- EOF
-	<?xml version="1.0" encoding="UTF-8"?>
-	<CLISH_MODULE xmlns="http://clish.sourceforge.net/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://clish.sourceforge.net/XMLSchema http://clish.sourceforge.net/XMLSchema/clish.xsd">
-	  <PTYPE name="STRING" help="String" pattern=".+" />
-	  <PTYPE name="UINT" help="Unsigned integer" pattern="[0-9]+" />
-	</CLISH_MODULE>
-EOF
-
   _in_target apt-get -q update
   _in_target apt-get -y dist-upgrade
   _in_target apt-get -y clean
@@ -182,9 +149,8 @@ EOF
 
 _usage () {
 	cat <<- EOF
-	Usage: $0 install
-	       $0 manage
-	       $0 shell
+	Usage: $0 install  Install debootstrap
+	       $0 init     Launch debootstrap
 EOF
 
 	return 0
